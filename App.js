@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import Expo, {Constants} from 'expo';
+import Expo, {Constants, Notifications } from 'expo';
 
 async function register() {
   console.log('Registering...W');
@@ -17,8 +17,9 @@ async function register() {
   const pushToken = await Expo.Notifications.getExpoPushTokenAsync();  
   console.log(' Token: ' + pushToken);
 
-  const url1 = 'http://192.168.0.17:8080/users/push-token';
-  const url2 = 'https://tklab.herokuapp.com//users/push-token';
+  const url1 = 'http://192.168.0.117:8080/users/push-token';
+  const url2 = 'http://172.24.174.30:8080/users/push-token';
+  const url3 = 'https://tklab.herokuapp.com//users/push-token';
 
   return fetch(url2, {
     method: 'POST',
@@ -28,13 +29,16 @@ async function register() {
     },
     body: JSON.stringify({
       token:  pushToken,
-      userId: 'thomas'
+      userId: 'dina'
     } ),
   });
 }
 
 export default class App extends React.Component {
-  
+  state = {
+    notification: {},
+  };
+
   componentWillMount() {
     register();
     this.listener = Expo.Notifications.addListener(this.listen);
@@ -43,15 +47,24 @@ export default class App extends React.Component {
   componentWillUnMount() {
       this.listener && Expo.Notifications.removeListener(this.listen)
   }
-
+/*
   listen = ({origin, data}) => {
+    console.log("a message !")
     console.log(origin, data);
   }
+*/
+  listen = (notification) => {
+    console.log("Origin:" + notification.origin );
+    console.log("ACTION:" + notification.data.ACTION );
+    console.log("title:" + notification.data.TITLE );
+    this.setState({notification: notification});
+  };
   
   render() {
     return (
       <View style={styles.container}>
-        <Text>Hello 38</Text>
+        <Text>Hello 41</Text>
+        <Text> Stataus[ {JSON.stringify(this.state.notification.data)}] </Text>
       </View>
     );
   }
